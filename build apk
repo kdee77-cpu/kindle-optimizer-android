@@ -1,0 +1,21 @@
+name: Build Android APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Get Buildozer Action
+        uses: ArtemGovorov/buildozer-action@v1
+        with:
+          command: buildozer android debug
+          repository_root: .
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-apk
+          path: bin/*.apk
