@@ -188,9 +188,7 @@ class FileSelectScreen(Screen):
         self.layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
         self.label = Label(text="Select a file", size_hint_y=0.1)
         
-        # Default user path across Android storage interfaces
         start_path = '/sdcard/Download' if os.path.exists('/sdcard/Download') else os.path.expanduser('~')
-        
         self.file_chooser = FileChooserIconView(path=start_path, filters=['*.epub', '*.EPUB'])
         
         btn_layout = BoxLayout(orientation='horizontal', size_hint_y=0.15, spacing=10)
@@ -221,21 +219,17 @@ class FileSelectScreen(Screen):
         mode = self.manager.current_mode
         
         if mode == "4":
-            # Native action for Cover extraction
             result = run_extract_cover(self.manager.selected_epub)
             self.manager.get_screen('status').status_label.text = result
             self.manager.current = 'status'
         elif mode == "3":
-            # Native action for language fix
             result = run_process_epub(self.manager.selected_epub, mode="3")
             self.manager.get_screen('status').status_label.text = result
             self.manager.current = 'status'
         elif mode == "1":
-            # Needs configuration, route to new cover image picker next
             self.manager.get_screen('cover_select').file_chooser.filters = ['*.jpg', '*.jpeg', '*.png']
             self.manager.current = 'cover_select'
         elif mode == "2":
-            # Profile choosing step
             self.manager.current = 'profile_select'
 
 class CoverSelectScreen(Screen):
