@@ -27,12 +27,8 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           
-          # Force create the android configuration paths to minimize initial setup errors
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          
-          # Use the 'yes' pipe directly into buildozer to auto-accept licenses natively
-          yes | buildozer --log_level=2 android debug
+          # Run buildozer cleanly without any piping to avoid broken pipe signals
+          buildozer --log_level=2 android debug
         env:
           APP_ANDROID_ARCHS: armeabi-v7a
           
