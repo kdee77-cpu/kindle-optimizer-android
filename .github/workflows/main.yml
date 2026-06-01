@@ -26,11 +26,17 @@ jobs:
       - name: Build APK with Buildozer
         run: |
           cd $GITHUB_WORKSPACE
-          # Pre-accept all android SDK licenses automatically
+          
+          # Force create the android configuration paths
           mkdir -p ~/.android
           touch ~/.android/repositories.cfg
           
-          # Run buildozer with the CI option flag to accept licenses natively
+          # Force accept all android SDK licenses before running buildozer
+          # This specifically clears the 'Skipping following packages as the license is not accepted' error.
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses || true
+          yes | sdkmanager --licenses || true
+
+          # Run buildozer with standard compilation configurations
           buildozer --log_level=2 android debug
         env:
           APP_ANDROID_ARCHS: armeabi-v7a
