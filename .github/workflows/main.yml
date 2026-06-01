@@ -25,10 +25,12 @@ jobs:
 
       - name: Build APK with Buildozer
         run: |
+          # Force execution from the checked-out GitHub workspace root
+          cd $GITHUB_WORKSPACE
           buildozer --log_level=2 android debug
         env:
           APP_ANDROID_ARCHS: armeabi-v7a
-
+          
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
