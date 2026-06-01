@@ -17,13 +17,26 @@ from kivy.uix.filechooser import FileChooserIconView
 from kivy.uix.scrollview import ScrollView
 from kivy.utils import platform
 
-# Request Android Storage Access at Startup
-if platform == 'android':
-    from android.permissions import request_permissions, Permission
-    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
+# =========================================================
+#       SAFE ANDROID STORAGE PERMISSION INITIALIZATION
+# =========================================================
+def check_android_permissions():
+    if platform == 'android':
+        from android.permissions import request_permissions, Permission
+        
+        def permission_callback(permissions, grants):
+            if all(grants):
+                print("Storage access approved by user.")
+            else:
+                print("Storage access denied.")
+                
+        request_permissions([
+            Permission.READ_EXTERNAL_STORAGE, 
+            Permission.WRITE_EXTERNAL_STORAGE
+        ], callback=permission_callback)
 
 # =========================================================
-#             CORE BACKEND LOGIC (Your Code Adapted for GUI)
+#             CORE BACKEND LOGIC (EPUB Processing)
 # =========================================================
 
 ET.register_namespace('', 'http://www.idpf.org/2007/opf')
@@ -267,8 +280,14 @@ class StatusScreen(Screen):
         layout.add_widget(home_btn)
         self.add_widget(layout)
 
+# =========================================================
+#                    APPLICATION APP RUNNER
+# =========================================================
 class KindleOptimizerApp(App):
     def build(self):
+        # Trigger storage configuration permissions safely at launch
+        check_android_permissions()
+        
         sm = ScreenManager()
         sm.current_mode = "1"
         sm.selected_epub = ""
