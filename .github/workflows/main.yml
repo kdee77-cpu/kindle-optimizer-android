@@ -25,8 +25,12 @@ jobs:
 
       - name: Build APK with Buildozer
         run: |
-          # Force execution from the checked-out GitHub workspace root
           cd $GITHUB_WORKSPACE
+          # Pre-accept all android SDK licenses automatically
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          
+          # Run buildozer with the CI option flag to accept licenses natively
           buildozer --log_level=2 android debug
         env:
           APP_ANDROID_ARCHS: armeabi-v7a
